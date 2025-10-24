@@ -21,10 +21,10 @@ pipeline {
 stage('Copy Reports') {
     steps {
         sh '''
-            cp reports/regression.html reports/regression.html || echo "Regression report not found"
-            cp reports/parametrize.html reports/parametrize.html || echo "Parametrize report not found"
-            cp reports/sanity.html reports/sanity.html || echo "Sanity report not found"
-        '''
+    docker cp regression_runner:/app/reports/regression.html reports/regression.html || echo "Regression report not found"
+    docker cp parametrize_runner:/app/reports/parametrize.html reports/parametrize.html || echo "Parametrize report not found"
+    docker cp sanity_runner:/app/reports/sanity.html reports/sanity.html || echo "Sanity report not found"
+'''
     }
 }
 
