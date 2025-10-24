@@ -1,0 +1,21 @@
+version: '3'
+services:
+  regression:
+    build:
+      context: ./regression
+    container_name: regression_runner
+
+  integration:
+    build:
+      context: ./integration
+    container_name: integration_runner
+
+  sanity:
+    build:
+      context: ./sanity
+    container_name: sanity_runner
+
+  system:
+    build:
+      context: ./system
+    container_name: system_runner
