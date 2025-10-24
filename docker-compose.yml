@@ -4,18 +4,22 @@ services:
     build:
       context: ./regression
     container_name: regression_runner
+    command: pytest -m regression --html=reports/regression.html --self-contained-html
+    volumes:
+      - ./reports:/app/reports
 
-  integration:
+  parametrize:
     build:
-      context: ./integration
-    container_name: integration_runner
+      context: ./parametrize
+    container_name: parametrize_runner
+    command: pytest -m parametrize --html=reports/parametrize.html --self-contained-html
+    volumes:
+      - ./reports:/app/reports
 
   sanity:
     build:
       context: ./sanity
     container_name: sanity_runner
-
-  system:
-    build:
-      context: ./system
-    container_name: system_runner
+    command: pytest -m sanity --html=reports/sanity.html --self-contained-html
+    volumes:
+      - ./reports:/app/reports

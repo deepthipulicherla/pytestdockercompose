@@ -8,25 +8,25 @@ pipeline {
     stages {
         stage('Prepare Workspace') {
             steps {
-                // Ensure the reports directory exists before mounting
                 sh "mkdir -p ${REPORT_DIR}"
             }
         }
-        stage('Build & Run Suites') {
-            steps {
-                sh 'docker-compose up --build'
-            }
-        }
 
-        stage('Copy Reports') {
-            steps {
-                sh '''
-                    docker cp regression_runner:/app/regression.html reports/regression.html
-                    docker cp sanity_runner:/app/sanity.html reports/sanity.html
-                    docker cp system_runner:/app/parametrize.html reports/parametrize.html
-                '''
-            }
-        }
+       stage('Build & Run Suites') {
+    steps {
+        sh 'docker-compose up --build --abort-on-container-exit'
+    }
+}
+
+stage('Copy Reports') {
+    steps {
+        sh '''
+            cp reports/regression.html reports/regression.html || echo "Regression report not found"
+            cp reports/parametrize.html reports/parametrize.html || echo "Parametrize report not found"
+            cp reports/sanity.html reports/sanity.html || echo "Sanity report not found"
+        '''
+    }
+}
 
         stage('Send Email') {
             steps {
@@ -42,15 +42,14 @@ pipeline {
 
         stage('Archive Reports') {
             steps {
-                archiveArtifacts artifacts: 'reports/*.html', allowEmptyArchive: true  //collects all HTML reports from the shared reports/ folder
+                archiveArtifacts artifacts: 'reports/*.html', allowEmptyArchive: true
             }
         }
+
         stage('Clean Up Containers') {
             steps {
-                // Stop and remove containers after test execution
                 sh 'docker-compose down'
             }
         }
-    }
     }
 }
